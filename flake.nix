@@ -6,17 +6,18 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
-        overlays = [ (final: prev: { hs = prev.haskell.packages.ghc96; }) ];
+        overlays =
+          [ (final: prev: { haskellPackages = prev.haskell.packages.ghc96; }) ];
       };
-      platformer =
-        pkgs.hs.callCabal2nix "platformer" (pkgs.lib.cleanSource ./.) { };
+      platformer = pkgs.haskellPackages.callCabal2nix "platformer"
+        (pkgs.lib.cleanSource ./.) { };
     in {
-      devShells.${system}.default = pkgs.hs.shellFor {
+      devShells.${system}.default = pkgs.haskellPackages.shellFor {
         packages = _: [ platformer ];
         nativeBuildInputs = [
           pkgs.haskellPackages.cabal-fmt
           pkgs.cabal-install
-          pkgs.hs.haskell-language-server
+          pkgs.haskellPackages.haskell-language-server
         ];
       };
     };
