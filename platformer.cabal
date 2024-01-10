@@ -1,38 +1,42 @@
-cabal-version:      3.4
-name:               platformer
-version:            0.1.0.0
-license:            GPL-3.0-or-later
-license-file:       LICENSE
-author:             Johannes Maier
-maintainer:         johannes.maier@mailbox.org
-category:           Game
-build-type:         Simple
+cabal-version: 3.4
+name:          platformer
+version:       0.1.0.0
+license:       GPL-3.0-or-later
+license-file:  LICENSE
+author:        Johannes Maier
+maintainer:    johannes.maier@mailbox.org
+category:      Game
+build-type:    Simple
 
 common warnings
-    ghc-options: -Wall -Werror
+  ghc-options: -Wall -Werror
 
 library
-    import:           warnings
-    exposed-modules:  MyLib
-    build-depends:    base ^>=4.19.0.0, sdl2
-    hs-source-dirs:   src-lib
-    default-language: GHC2021
+  import:           warnings
+  exposed-modules:  MyLib
+  build-depends:
+    , base
+    , sdl2
+
+  hs-source-dirs:   src-lib
+  default-language: GHC2021
 
 executable platformer
-    import:           warnings
-    main-is:          Main.hs
-    build-depends:
-        base ^>=4.19.0.0,
-        platformer
-    hs-source-dirs:   src-exe
-    default-language: GHC2021
+  import:           warnings
+  main-is:          Main.hs
+  build-depends:
+    , base
+    , platformer
+
+  hs-source-dirs:   src-exe
+  default-language: GHC2021
 
 test-suite platformer-test
-    import:           warnings
-    default-language: GHC2021
-    type:             exitcode-stdio-1.0
-    hs-source-dirs:   test
-    main-is:          Main.hs
-    build-depends:
-        base ^>=4.19.0.0,
-        platformer
+  import:           warnings
+  default-language: GHC2021
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   test
+  main-is:          Main.hs
+  build-depends:
+    , base
+    , platformer
