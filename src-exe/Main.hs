@@ -1,8 +1,6 @@
 module Main where
 
-import qualified MyLib (someFunc)
+import Platformer.Main qualified
 
 main :: IO ()
-main = do
-  putStrLn "Hello, Haskell!"
-  MyLib.someFunc
+main = Platformer.Main.main
