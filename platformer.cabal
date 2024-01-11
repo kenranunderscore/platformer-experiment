@@ -8,11 +8,13 @@ maintainer:    johannes.maier@mailbox.org
 category:      Game
 build-type:    Simple
 
-common warnings
-  ghc-options: -Wall -Werror
+common general-options
+  ghc-options:
+    -threaded -haddock -Wall -Werror=incomplete-patterns
+    -Werror=missing-fields -Wunused-packages
 
 library
-  import:           warnings
+  import:           general-options
   exposed-modules:  Platformer.Main
   build-depends:
     , base
@@ -22,7 +24,7 @@ library
   default-language: GHC2021
 
 executable platformer
-  import:           warnings
+  import:           general-options
   main-is:          Main.hs
   build-depends:
     , base
@@ -32,7 +34,7 @@ executable platformer
   default-language: GHC2021
 
 test-suite platformer-test
-  import:           warnings
+  import:           general-options
   default-language: GHC2021
   type:             exitcode-stdio-1.0
   hs-source-dirs:   test
