@@ -9,7 +9,7 @@ module SDL.Image (
 
 import Control.Exception.Safe qualified as Exception
 import Control.Monad
-import Data.Bits ((.<<.), (.|.))
+import Data.Bits ((.|.))
 import Data.Foldable (foldl')
 import Foreign.C.String
 import Foreign.C.Types
@@ -27,15 +27,14 @@ data InitFlag
     | AVIF
     deriving stock (Enum, Bounded, Show, Eq)
 
--- FIXME: use constants from header file (reexported)
 flagToCInt :: InitFlag -> CInt
 flagToCInt = \case
-    JPG -> 1
-    PNG -> 1 .<<. 1
-    TIF -> 1 .<<. 2
-    WEBP -> 1 .<<. 3
-    JXL -> 1 .<<. 4
-    AVIF -> 1 .<<. 5
+    JPG -> Raw.IMG_INIT_JPG
+    PNG -> Raw.IMG_INIT_PNG
+    TIF -> Raw.IMG_INIT_TIF
+    WEBP -> Raw.IMG_INIT_WEBP
+    JXL -> Raw.IMG_INIT_JXL
+    AVIF -> Raw.IMG_INIT_AVIF
 
 loadSurface :: FilePath -> IO SDL.Surface
 loadSurface path = do
