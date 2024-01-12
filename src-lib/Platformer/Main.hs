@@ -60,7 +60,7 @@ gameLoop renderer tex = do
 
 main :: IO ()
 main = do
-    Image.initialize 3
+    Image.initialize [Image.PNG]
     withSdl $ withSdlWindow $ \window -> do
         withSdlRenderer window $ \renderer -> do
             tex <- Image.loadTexture renderer "tileset.png"
