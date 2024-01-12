@@ -23,11 +23,26 @@ withSdl =
             putStrLn "shut down SDL"
         )
 
+withSdlImage :: [Image.InitFlag] -> IO a -> IO a
+withSdlImage flags =
+    Exception.bracket_
+        ( do
+            Image.initialize flags
+            putStrLn "initialized SDL_image"
+        )
+        ( do
+            Image.quit
+            putStrLn "quit SDL_image"
+        )
+
 withSdlWindow :: (SDL.Window -> IO a) -> IO a
 withSdlWindow action = do
     let windowConfig = SDL.defaultWindow{SDL.windowInitialSize = SDL.V2 (160 * tileSize) (144 * tileSize)}
     Exception.bracket
-        (SDL.createWindow "platformer" windowConfig)
+        ( do
+            putStrLn "creating SDL window..."
+            SDL.createWindow "platformer" windowConfig
+        )
         ( \w -> do
             SDL.destroyWindow w
             putStrLn "window destroyed"
@@ -38,7 +53,10 @@ withSdlRenderer :: SDL.Window -> (SDL.Renderer -> IO a) -> IO a
 withSdlRenderer window = do
     let rendererConfig = SDL.defaultRenderer{SDL.rendererType = SDL.AcceleratedVSyncRenderer}
     Exception.bracket
-        (SDL.createRenderer window (-1) rendererConfig)
+        ( do
+            putStrLn "creating SDL renderer..."
+            SDL.createRenderer window (-1) rendererConfig
+        )
         ( \r -> do
             SDL.destroyRenderer r
             putStrLn "renderer destroyed"
@@ -60,8 +78,8 @@ gameLoop renderer tex = do
 
 main :: IO ()
 main = do
-    Image.initialize [Image.PNG]
     withSdl $ withSdlWindow $ \window -> do
-        withSdlRenderer window $ \renderer -> do
-            tex <- Image.loadTexture renderer "tileset.png"
-            gameLoop renderer tex
+        withSdlImage [Image.PNG] $ do
+            withSdlRenderer window $ \renderer -> do
+                tex <- Image.loadTexture renderer "tileset.png"
+                gameLoop renderer tex

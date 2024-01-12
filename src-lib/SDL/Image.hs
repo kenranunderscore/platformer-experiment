@@ -5,6 +5,7 @@ module SDL.Image (
     InitFlag (..),
     initialize,
     loadTexture,
+    quit,
 ) where
 
 import Control.Exception.Safe qualified as Exception
@@ -54,3 +55,6 @@ initialize :: [InitFlag] -> IO ()
 initialize flags = do
     let val = foldl' (\res flag -> res .|. flagToCInt flag) 0 flags
     void $ Raw.initialize val
+
+quit :: IO ()
+quit = Raw.quit
