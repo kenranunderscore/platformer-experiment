@@ -16,7 +16,6 @@ import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
 import SDL qualified
-
 import SDL.Image.Raw qualified as Raw
 
 data InitFlag

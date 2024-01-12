@@ -17,6 +17,7 @@ library
   import:            general-options
   exposed-modules:
     Platformer.Main
+    Platformer.Tiles
     SDL.Image
     SDL.Image.Raw
 

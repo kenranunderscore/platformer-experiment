@@ -8,6 +8,8 @@ import Foreign.C.Types (CInt)
 import SDL qualified
 import SDL.Image qualified as Image
 
+import Platformer.Tiles qualified as Tiles
+
 tileSize :: CInt
 tileSize = 4
 
@@ -62,12 +64,12 @@ withSdlRenderer window = do
             putStrLn "renderer destroyed"
         )
 
-gameLoop renderer tex = do
+gameLoop renderer tileset = do
     evts <- SDL.pollEvents
     SDL.clear renderer
-    SDL.copy renderer tex Nothing Nothing
+    SDL.copy renderer tileset (Just $ Tiles.getRect Tiles.Empty) Nothing
     SDL.present renderer
-    unless (any escPressed evts) (gameLoop renderer tex)
+    unless (any escPressed evts) (gameLoop renderer tileset)
   where
     escPressed evt =
         case SDL.eventPayload evt of
@@ -81,5 +83,5 @@ main = do
     withSdl $ withSdlWindow $ \window -> do
         withSdlImage [Image.PNG] $ do
             withSdlRenderer window $ \renderer -> do
-                tex <- Image.loadTexture renderer "tileset.png"
-                gameLoop renderer tex
+                tileset <- Tiles.loadTileset renderer
+                gameLoop renderer tileset
