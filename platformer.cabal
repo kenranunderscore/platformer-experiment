@@ -18,6 +18,7 @@ library
   exposed-modules:
     Platformer.Main
     SDL.Image
+    SDL.Image.Raw
 
   pkgconfig-depends: SDL2_image
   build-depends:

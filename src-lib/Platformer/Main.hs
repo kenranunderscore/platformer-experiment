@@ -1,19 +1,12 @@
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Platformer.Main (main) where
 
 import Control.Exception.Safe qualified as Exception
 import Control.Monad
-import Data.Vector (Vector)
-import Data.Vector qualified as V
-import Debug.Trace
 import Foreign.C.Types (CInt)
 import SDL qualified
-import SDL.Image qualified as IMG
-
-import Platformer.World qualified as World
+import SDL.Image qualified as Image
 
 tileSize :: CInt
 tileSize = 4
@@ -67,8 +60,8 @@ gameLoop renderer tex = do
 
 main :: IO ()
 main = do
-    print =<< IMG.initRaw 3
+    Image.initialize 3
     withSdl $ withSdlWindow $ \window -> do
         withSdlRenderer window $ \renderer -> do
-            tex <- IMG.loadTexture renderer "tileset.png"
+            tex <- Image.loadTexture renderer "tileset.png"
             gameLoop renderer tex
