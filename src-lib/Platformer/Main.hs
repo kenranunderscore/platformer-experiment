@@ -1,14 +1,22 @@
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Platformer.Main (main) where
 
 import Control.Exception.Safe qualified as Exception
 import Control.Monad
+import Data.Vector (Vector)
+import Data.Vector qualified as V
+import Debug.Trace
 import Foreign.C.Types (CInt)
 import SDL qualified
+import SDL.Image qualified as IMG
+
+import Platformer.World qualified as World
 
 tileSize :: CInt
-tileSize = 8
+tileSize = 4
 
 withSdl :: IO a -> IO a
 withSdl =
@@ -43,11 +51,12 @@ withSdlRenderer window = do
             putStrLn "renderer destroyed"
         )
 
-gameLoop renderer = do
+gameLoop renderer tex = do
     evts <- SDL.pollEvents
     SDL.clear renderer
+    SDL.copy renderer tex Nothing Nothing
     SDL.present renderer
-    unless (any escPressed evts) (gameLoop renderer)
+    unless (any escPressed evts) (gameLoop renderer tex)
   where
     escPressed evt =
         case SDL.eventPayload evt of
@@ -57,6 +66,9 @@ gameLoop renderer = do
             _ -> False
 
 main :: IO ()
-main = withSdl $ withSdlWindow $ \window -> do
-    withSdlRenderer window $ \renderer -> do
-        gameLoop renderer
+main = do
+    print =<< IMG.initRaw 3
+    withSdl $ withSdlWindow $ \window -> do
+        withSdlRenderer window $ \renderer -> do
+            tex <- IMG.loadTexture renderer "tileset.png"
+            gameLoop renderer tex

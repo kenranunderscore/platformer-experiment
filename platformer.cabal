@@ -14,15 +14,19 @@ common general-options
     -Werror=missing-fields -Wunused-packages
 
 library
-  import:           general-options
-  exposed-modules:  Platformer.Main
+  import:            general-options
+  exposed-modules:
+    Platformer.Main
+    SDL.Image
+
+  pkgconfig-depends: SDL2_image
   build-depends:
     , base
     , safe-exceptions
     , sdl2
 
-  hs-source-dirs:   src-lib
-  default-language: GHC2021
+  hs-source-dirs:    src-lib
+  default-language:  GHC2021
 
 executable platformer
   import:           general-options
