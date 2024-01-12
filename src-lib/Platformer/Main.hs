@@ -5,13 +5,12 @@ module Platformer.Main (main) where
 import Control.Exception.Safe qualified as Exception
 import Control.Monad
 import Foreign.C.Types (CInt)
+import SDL (($=))
 import SDL qualified
 import SDL.Image qualified as Image
 
 import Platformer.Tiles qualified as Tiles
-
-tileSize :: CInt
-tileSize = 4
+import Platformer.World qualified as World
 
 withSdl :: IO a -> IO a
 withSdl =
@@ -37,9 +36,9 @@ withSdlImage flags =
             putStrLn "quit SDL_image"
         )
 
-withSdlWindow :: (SDL.Window -> IO a) -> IO a
-withSdlWindow action = do
-    let windowConfig = SDL.defaultWindow{SDL.windowInitialSize = SDL.V2 (160 * tileSize) (144 * tileSize)}
+withSdlWindow :: CInt -> CInt -> (SDL.Window -> IO a) -> IO a
+withSdlWindow w h action = do
+    let windowConfig = SDL.defaultWindow{SDL.windowInitialSize = SDL.V2 w h}
     Exception.bracket
         ( do
             putStrLn "creating SDL window..."
@@ -64,12 +63,26 @@ withSdlRenderer window = do
             putStrLn "renderer destroyed"
         )
 
-gameLoop renderer tileset = do
+renderWorld :: SDL.Renderer -> World.World -> SDL.Texture -> IO ()
+renderWorld renderer world tileset =
+    World.coordMap_ renderTile world
+  where
+    renderTile (x, y) tile =
+        let
+            source = Tiles.getRect tile
+            dest =
+                SDL.Rectangle
+                    (SDL.P $ SDL.V2 (Tiles.tileSize * fromIntegral x) (Tiles.tileSize * fromIntegral y))
+                    Tiles.tileDimensions
+        in
+            SDL.copy renderer tileset (Just source) (Just dest)
+
+gameLoop renderer world tileset = do
     evts <- SDL.pollEvents
     SDL.clear renderer
-    SDL.copy renderer tileset (Just $ Tiles.getRect Tiles.Empty) Nothing
+    renderWorld renderer world tileset
     SDL.present renderer
-    unless (any escPressed evts) (gameLoop renderer tileset)
+    unless (any escPressed evts) (gameLoop renderer world tileset)
   where
     escPressed evt =
         case SDL.eventPayload evt of
@@ -80,8 +93,15 @@ gameLoop renderer tileset = do
 
 main :: IO ()
 main = do
-    withSdl $ withSdlWindow $ \window -> do
-        withSdlImage [Image.PNG] $ do
-            withSdlRenderer window $ \renderer -> do
-                tileset <- Tiles.loadTileset renderer
-                gameLoop renderer tileset
+    let globalScale = 20
+    world <- World.load "test.world"
+    withSdl
+        $ withSdlWindow
+            (globalScale * Tiles.tileSize * World.width world)
+            (globalScale * Tiles.tileSize * World.height world)
+        $ \window -> do
+            withSdlImage [Image.PNG] $ do
+                withSdlRenderer window $ \renderer -> do
+                    tileset <- Tiles.loadTileset renderer
+                    SDL.rendererScale renderer $= SDL.V2 (realToFrac globalScale) (realToFrac globalScale)
+                    gameLoop renderer world tileset

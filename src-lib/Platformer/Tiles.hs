@@ -4,6 +4,8 @@ module Platformer.Tiles (
     Tile (..),
     getRect,
     loadTileset,
+    tileDimensions,
+    tileSize,
 ) where
 
 import Foreign.C.Types (CInt)
@@ -15,6 +17,9 @@ data Tile = Empty | Solid
 
 tileSize :: CInt
 tileSize = 8
+
+tileDimensions :: SDL.V2 CInt
+tileDimensions = SDL.V2 tileSize tileSize
 
 -- FIXME: cache this
 getRect :: Tile -> SDL.Rectangle CInt
