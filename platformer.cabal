@@ -16,6 +16,7 @@ common general-options
 library
   import:            general-options
   exposed-modules:
+    Platformer.ECS
     Platformer.Main
     Platformer.Tiles
     Platformer.World
@@ -25,8 +26,10 @@ library
   pkgconfig-depends: SDL2_image
   build-depends:
     , base
+    , random
     , safe-exceptions
     , sdl2
+    , uuid
     , vector
 
   hs-source-dirs:    src-lib
